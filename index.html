@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>밀알복지재단 WEB PRESS KIT</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icon CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts (Noto Sans KR) -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        miral: {
+                            green: '#00AB4D',
+                            red: '#E30613',
+                            dark: '#111827',
+                            gray: '#F8F9FA'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Noto Sans KR', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        html { scroll-behavior: smooth; }
+    </style>
+</head>
+<body class="font-sans text-gray-800 bg-gray-50 antialiased">
+
+    <!-- Header / Navigation -->
+    <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="flex items-center font-bold text-2xl tracking-tight text-gray-900">
+                    <span class="text-miral-green">밀알복지재단</span>
+                    <span class="ml-2 text-xs bg-miral-green/10 text-miral-green px-2 py-0.5 rounded font-semibold border border-miral-green/20">PRESS KIT</span>
+                </div>
+            </div>
+            
+            <nav class="hidden md:flex items-center space-x-8 text-sm font-medium text-gray-700">
+                <a href="#about" class="hover:text-miral-green transition-colors">재단소개</a>
+                <a href="#stats" class="hover:text-miral-green transition-colors">주요지표</a>
+                <a href="#projects" class="hover:text-miral-green transition-colors">핵심사업</a>
+                <a href="#schedule" class="hover:text-miral-green transition-colors">2026 취재일정</a>
+                <a href="#media" class="hover:text-miral-green transition-colors">보도자료 & 자료실</a>
+            </nav>
+
+            <div class="flex items-center space-x-3">
+                <a href="#contact" class="hidden sm:inline-flex items-center justify-center px-4 py-2 text-sm font-semibold text-white bg-miral-red rounded-lg shadow-sm hover:bg-red-700 transition-colors">
+                    <i class="fa-solid fa-paper-plane mr-2"></i> 취재 문의
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="relative bg-gradient-to-br from-miral-dark via-gray-900 to-emerald-950 text-white py-24 px-4 overflow-hidden">
+        <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#00AB4D_1px,transparent_1px)] [background-size:16px_16px]"></div>
+        <div class="max-w-5xl mx-auto text-center relative z-10">
+            <span class="inline-block bg-miral-green/20 text-emerald-300 border border-miral-green/40 px-4 py-1.5 rounded-full text-sm font-medium mb-6">
+                밀알복지재단 공식 미디어룸
+            </span>
+            <h1 class="text-3xl sm:text-5xl lg:text-6xl font-extrabold leading-tight tracking-tight mb-6">
+                소외된 이웃과 더불어 살아가는<br class="hidden sm:inline"/>
+                <span class="text-miral-green">완전한 사회통합</span>을 이룹니다
+            </h1>
+            <p class="text-lg sm:text-xl text-gray-300 font-light max-w-3xl mx-auto mb-10 leading-relaxed">
+                밀알복지재단은 장애인의 완전한 사회통합과 자립을 위해 국내외 맞춤형 복지사업 및 사회적 경제 모델을 선도하고 있습니다.
+            </p>
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <a href="#contact" class="px-8 py-4 bg-miral-green hover:bg-emerald-600 text-white font-bold rounded-xl shadow-lg transition-all flex items-center justify-center">
+                    <i class="fa-solid fa-pen-to-square mr-2"></i> Quick 취재 요청
+                </a>
+                <a href="#media" class="px-8 py-4 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-xl backdrop-blur-md border border-white/20 transition-all flex items-center justify-center">
+                    <i class="fa-solid fa-download mr-2"></i> 미디어 킷 다운로드
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Press Bar -->
+    <div class="bg-emerald-50 border-y border-emerald-100 py-4">
+        <div class="max-w-7xl mx-auto px-4 flex flex-wrap items-center justify-between gap-4 text-sm">
+            <div class="flex items-center space-x-2 text-miral-dark font-medium">
+                <span class="bg-miral-red text-white text-xs px-2 py-0.5 rounded font-bold">PRESS NOTICE</span>
+                <span>2026년 주요 취재 안건 및 미디어용 공식 자료가 업데이트되었습니다.</span>
+            </div>
+            <div class="flex items-center space-x-4 font-semibold text-miral-green">
+                <a href="#contact" class="hover:underline flex items-center"><i class="fa-solid fa-phone mr-1"></i> 홍보담당자 직접 연결</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- About Section -->
+    <section id="about" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-3xl font-bold text-gray-900 mb-4">재단 소개</h2>
+                <p class="text-gray-600 leading-relaxed">
+                    1993년 설립된 밀알복지재단은 장애인의 인간다운 삶과 권리를 보장하기 위해 생애주기별 맞춤형 복지서비스와 국제개발협력사업을 수행하는 전문 복지기관입니다.
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="p-8 bg-gray-50 rounded-2xl border border-gray-100">
+                    <div class="w-12 h-12 bg-miral-green/10 text-miral-green rounded-xl flex items-center justify-center text-xl font-bold mb-6">
+                        <i class="fa-solid fa-bullseye"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">MISSION</h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        기독교 정신을 바탕으로 소외된 이웃과 더불어 살아가는 완전한 사회통합을 이룬다.
+                    </p>
+                </div>
+                <div class="p-8 bg-gray-50 rounded-2xl border border-gray-100">
+                    <div class="w-12 h-12 bg-miral-green/10 text-miral-green rounded-xl flex items-center justify-center text-xl font-bold mb-6">
+                        <i class="fa-solid fa-eye"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">VISION</h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        생애주기별 자립복지, 장애통합, Global+Local의 Glocal 모델 구현을 통한 지속가능한 복지 생태계 구축.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section id="stats" class="py-20 bg-miral-gray border-y border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <span class="text-miral-green font-bold text-sm tracking-widest uppercase">Transparency & Impact</span>
+                <h2 class="text-3xl font-bold text-gray-900 mt-2">숫자로 보는 밀알복지재단</h2>
+                <p class="text-xs text-gray-500 mt-1">*2024년 밀알복지재단 연차보고서 기준</p>
+            </div>
+
+            <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 text-center relative overflow-hidden">
+                    <div class="absolute top-0 left-0 right-0 h-1 bg-miral-green"></div>
+                    <span class="inline-block bg-emerald-50 text-miral-green text-xs font-bold px-2.5 py-1 rounded-full mb-3">투명성 최우수</span>
+                    <div class="text-3xl font-black text-gray-900 mb-1">7년 연속</div>
+                    <div class="text-sm font-medium text-gray-500">한국가이드스타 평가 만점</div>
+                </div>
+
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 text-center relative overflow-hidden">
+                    <div class="absolute top-0 left-0 right-0 h-1 bg-miral-green"></div>
+                    <span class="inline-block bg-emerald-50 text-miral-green text-xs font-bold px-2.5 py-1 rounded-full mb-3">연간 기부 규모</span>
+                    <div class="text-3xl font-black text-miral-green mb-1">1,516억 원</div>
+                    <div class="text-sm font-medium text-gray-500">현금 및 물품 기부액</div>
+                </div>
+
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 text-center relative overflow-hidden">
+                    <div class="absolute top-0 left-0 right-0 h-1 bg-miral-green"></div>
+                    <span class="inline-block bg-emerald-50 text-miral-green text-xs font-bold px-2.5 py-1 rounded-full mb-3">장애인 일자리</span>
+                    <div class="text-3xl font-black text-gray-900 mb-1">46개 매장</div>
+                    <div class="text-sm font-medium text-gray-500">굿윌스토어 (480명 고용)</div>
+                </div>
+
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 text-center relative overflow-hidden">
+                    <div class="absolute top-0 left-0 right-0 h-1 bg-miral-green"></div>
+                    <span class="inline-block bg-emerald-50 text-miral-green text-xs font-bold px-2.5 py-1 rounded-full mb-3">복지 수혜 인원</span>
+                    <div class="text-3xl font-black text-gray-900 mb-1">2,853,351명</div>
+                    <div class="text-sm font-medium text-gray-500">연간 지원 수혜자 수</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Key Projects Section -->
+    <section id="projects" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-16">
+                <div>
+                    <span class="text-miral-red font-bold text-sm tracking-widest uppercase">Media Coverage Item</span>
+                    <h2 class="text-3xl font-bold text-gray-900 mt-2">주요 취재 추천 사업</h2>
+                </div>
+                <p class="text-gray-500 text-sm mt-2 md:mt-0">기사화 및 현장 취재가 용이한 대표 사업들입니다.</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Project Card 1 -->
+                <div class="bg-gray-50 rounded-2xl border border-gray-100 overflow-hidden hover:shadow-lg transition-shadow">
+                    <div class="h-48 bg-emerald-900 flex items-center justify-center text-white p-6 relative">
+                        <span class="absolute top-4 right-4 bg-miral-red text-white text-xs font-bold px-2.5 py-1 rounded">인기 취재</span>
+                        <div class="text-center">
+                            <i class="fa-solid fa-store text-4xl mb-2 text-emerald-400"></i>
+                            <h3 class="text-xl font-bold">굿윌스토어 (Goodwill)</h3>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-sm font-bold text-miral-green mb-2">"자선이 아닌 기회를!"</p>
+                        <p class="text-gray-600 text-sm leading-relaxed mb-6">
+                            개인과 기업이 기증한 물품을 재가공해 판매한 수익으로 장애인을 정규직 고용하는 자립 인프라 모델. (전국 46개 매장 운영)
+                        </p>
+                        <a href="#contact" class="text-xs font-bold text-gray-900 hover:text-miral-green inline-flex items-center">
+                            매장 현장 취재 신청하기 <i class="fa-solid fa-arrow-right ml-1"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Project Card 2 -->
+                <div class="bg-gray-50 rounded-2xl border border-gray-100 overflow-hidden hover:shadow-lg transition-shadow">
+                    <div class="h-48 bg-gray-900 flex items-center justify-center text-white p-6 relative">
+                        <span class="absolute top-4 right-4 bg-miral-green text-white text-xs font-bold px-2.5 py-1 rounded">국내 유일</span>
+                        <div class="text-center">
+                            <i class="fa-solid fa-hand-holding-heart text-4xl mb-2 text-emerald-400"></i>
+                            <h3 class="text-xl font-bold">헬렌켈러센터</h3>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-sm font-bold text-miral-green mb-2">보건복지부 지정 시청각장애인 전담기관</p>
+                        <p class="text-gray-600 text-sm leading-relaxed mb-6">
+                            시각과 청각이 동시 손실된 시청각장애인을 대상으로 점자/촉수화 교육, 아동 맞춤형 촉감교육 및 자립을 전담 지원.
+                        </p>
+                        <a href="#contact" class="text-xs font-bold text-gray-900 hover:text-miral-green inline-flex items-center">
+                            센터 및 교육 인터뷰 요청 <i class="fa-solid fa-arrow-right ml-1"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Project Card 3 -->
+                <div class="bg-gray-50 rounded-2xl border border-gray-100 overflow-hidden hover:shadow-lg transition-shadow">
+                    <div class="h-48 bg-emerald-950 flex items-center justify-center text-white p-6 relative">
+                        <div class="text-center">
+                            <i class="fa-solid fa-palette text-4xl mb-2 text-emerald-400"></i>
+                            <h3 class="text-xl font-bold">브릿지온 (Bridge On)</h3>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-sm font-bold text-miral-green mb-2">발달장애인 미술·음악 전문 예술단</p>
+                        <p class="text-gray-600 text-sm leading-relaxed mb-6">
+                            성인 발달장애 작가(아르떼) 및 연주자(앙상블)를 정규직 예술인으로 고용하여 문화예술을 통한 장애인식 개선 전개.
+                        </p>
+                        <a href="#contact" class="text-xs font-bold text-gray-900 hover:text-miral-green inline-flex items-center">
+                            공연 및 전시 취재 신청 <i class="fa-solid fa-arrow-right ml-1"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 2026 Schedule Section -->
+    <section id="schedule" class="py-20 bg-miral-gray border-t border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="text-miral-green font-bold text-sm tracking-widest uppercase">2026 Press Calendar</span>
+                <h2 class="text-3xl font-bold text-gray-900 mt-2">2026년 주요 취재 일정 안내</h2>
+                <p class="text-gray-500 text-sm mt-2">기획 기사 작성 시 참고하실 수 있는 월별 대표 이슈 타임라인입니다.</p>
+            </div>
+
+            <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+                    <div class="text-miral-red font-black text-xl mb-2">4월 APR</div>
+                    <h4 class="font-bold text-gray-900 mb-2">장애인의 날 캠페인</h4>
+                    <p class="text-xs text-gray-600 leading-relaxed">
+                        · MBC '봄날의 기적' 모금 방송<br>
+                        · 주요 지하철 역사 인식개선 캠페인<br>
+                        · 굿윌스토어 신규 매장 개점
+                    </p>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+                    <div class="text-miral-green font-black text-xl mb-2">6월 JUN</div>
+                    <h4 class="font-bold text-gray-900 mb-2">제23회 밀알콘서트</h4>
+                    <p class="text-xs text-gray-600 leading-relaxed">
+                        · 국내 최대 규모 배리어프리 콘서트<br>
+                        · 장애인-비장애인 통합 문화공연<br>
+                        · 수익금 전액 취약계층 지원
+                    </p>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+                    <div class="text-miral-green font-black text-xl mb-2">10월 OCT</div>
+                    <h4 class="font-bold text-gray-900 mb-2">시청각장애인 전국대회</h4>
+                    <p class="text-xs text-gray-600 leading-relaxed">
+                        · 국내 최초 전국 규모 교류의 장<br>
+                        · 제12회 스토리텔링 공모전 시상식<br>
+                        · 장애인식개선 콘텐츠 공개
+                    </p>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+                    <div class="text-miral-green font-black text-xl mb-2">11-12월 NOV/DEC</div>
+                    <h4 class="font-bold text-gray-900 mb-2">앙상블 정기연주회</h4>
+                    <p class="text-xs text-gray-600 leading-relaxed">
+                        · 발달장애 현악 '알레그로' 연주회<br>
+                        · 발달장애 첼로 '날개' 정기연주회<br>
+                        · 세계 장애인의 날 기념 캠페인
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Media & Asset Download Section -->
+    <section id="media" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-3xl font-bold text-gray-900">미디어 킷 & 보도자료</h2>
+                <p class="text-gray-500 text-sm mt-2">기사 작성에 필요한 고화질 로고, 이미지 및 보도자료 첨부 파일입니다.</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-6 mb-12">
+                <div class="p-6 bg-gray-50 rounded-xl border border-gray-200 flex items-center justify-between">
+                    <div>
+                        <h4 class="font-bold text-gray-900 text-sm">공식 CI / 로고 팩</h4>
+                        <p class="text-xs text-gray-500 mt-1">AI, PNG high-res</p>
+                    </div>
+                    <button class="px-3 py-2 bg-white border border-gray-300 rounded-lg text-xs font-bold hover:border-miral-green hover:text-miral-green transition-colors">
+                        <i class="fa-solid fa-download"></i> 받기
+                    </button>
+                </div>
+
+                <div class="p-6 bg-gray-50 rounded-xl border border-gray-200 flex items-center justify-between">
+                    <div>
+                        <h4 class="font-bold text-gray-900 text-sm">2026 프레스킷 PDF</h4>
+                        <p class="text-xs text-gray-500 mt-1">전체 사업 소개서 (13p)</p>
+                    </div>
+                    <button class="px-3 py-2 bg-white border border-gray-300 rounded-lg text-xs font-bold hover:border-miral-green hover:text-miral-green transition-colors">
+                        <i class="fa-solid fa-download"></i> 받기
+                    </button>
+                </div>
+
+                <div class="p-6 bg-gray-50 rounded-xl border border-gray-200 flex items-center justify-between">
+                    <div>
+                        <h4 class="font-bold text-gray-900 text-sm">대표 사업 고화질 스틸컷</h4>
+                        <p class="text-xs text-gray-500 mt-1">굿윌스토어/헬렌켈러 등</p>
+                    </div>
+                    <button class="px-3 py-2 bg-white border border-gray-300 rounded-lg text-xs font-bold hover:border-miral-green hover:text-miral-green transition-colors">
+                        <i class="fa-solid fa-download"></i> 받기
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact & PR Office Section -->
+    <section id="contact" class="py-20 bg-gray-900 text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid lg:grid-cols-2 gap-12">
+                <!-- Contact Info -->
+                <div>
+                    <span class="text-miral-green font-bold text-sm tracking-widest uppercase">Press Office</span>
+                    <h2 class="text-3xl font-bold mt-2 mb-6">언론홍보 담당자 안내</h2>
+                    <p class="text-gray-400 text-sm mb-8 leading-relaxed">
+                        밀알복지재단 커뮤니케이션실은 기자님들의 신속하고 정확한 취재를 지원합니다. 인터뷰, 현장 방문, 신규 취재 요청은 아래 연락처로 언제든 문의주세요.
+                    </p>
+
+                    <div class="space-y-4">
+                        <div class="p-4 bg-gray-800/60 rounded-xl border border-gray-700/50 flex justify-between items-center">
+                            <div>
+                                <span class="text-xs font-bold text-miral-green">실장</span>
+                                <h4 class="font-bold text-base">이수은 실장</h4>
+                                <p class="text-xs text-gray-400">selee@miral.org | 02-6411-3571</p>
+                            </div>
+                            <a href="mailto:selee@miral.org" class="text-xs bg-gray-700 hover:bg-miral-green px-3 py-2 rounded font-semibold transition-colors">메일 보낼기</a>
+                        </div>
+
+                        <div class="p-4 bg-gray-800/60 rounded-xl border border-gray-700/50 flex justify-between items-center">
+                            <div>
+                                <span class="text-xs font-bold text-miral-green">팀장</span>
+                                <h4 class="font-bold text-base">오솔길 팀장</h4>
+                                <p class="text-xs text-gray-400">solgil@miral.org | 02-6411-3573</p>
+                            </div>
+                            <a href="mailto:solgil@miral.org" class="text-xs bg-gray-700 hover:bg-miral-green px-3 py-2 rounded font-semibold transition-colors">메일 보내기</a>
+                        </div>
+
+                        <div class="p-4 bg-gray-800/60 rounded-xl border border-gray-700/50 flex justify-between items-center">
+                            <div>
+                                <span class="text-xs font-bold text-miral-green">간사</span>
+                                <h4 class="font-bold text-base">노혜진 간사</h4>
+                                <p class="text-xs text-gray-400">hjnho@miral.org | 02-6411-3577</p>
+                            </div>
+                            <a href="mailto:hjnho@miral.org" class="text-xs bg-gray-700 hover:bg-miral-green px-3 py-2 rounded font-semibold transition-colors">메일 보내기</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Inquiry Form -->
+                <div class="bg-gray-800 p-8 rounded-2xl border border-gray-700">
+                    <h3 class="text-xl font-bold mb-6 flex items-center">
+                        <i class="fa-solid fa-paper-plane text-miral-red mr-2"></i> Quick 취재 및 자료 요청 Form
+                    </h3>
+                    <form class="space-y-4" onsubmit="event.preventDefault(); alert('취재 요청이 성공적으로 전달되었습니다.');">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs text-gray-400 mb-1">언론사명 *</label>
+                                <input type="text" required placeholder="예: OO일보" class="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-miral-green">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-400 mb-1">기자 성함 *</label>
+                                <input type="text" required placeholder="홍길동" class="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-miral-green">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs text-gray-400 mb-1">이메일 *</label>
+                                <input type="email" required placeholder="reporter@media.com" class="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-miral-green">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-400 mb-1">연락처 *</label>
+                                <input type="tel" required placeholder="010-0000-0000" class="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-miral-green">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">취재 목적 및 희망 내용 *</label>
+                            <textarea rows="4" required placeholder="취재 희망 사업 및 가망 보도 일정 등을 적어주시면 빠른 연결을 도와드립니다." class="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-miral-green"></textarea>
+                        </div>
+
+                        <button type="submit" class="w-full bg-miral-green hover:bg-emerald-600 text-white font-bold py-3 rounded-lg shadow-lg transition-colors">
+                            취재 요청 제출하기
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-black text-gray-500 py-8 text-xs border-t border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 text-center space-y-2">
+            <p>사회복지법인 밀알복지재단 | 커뮤니케이션실 대표 이메일: pr@miral.org</p>
+            <p>© MILAL WELFARE FOUNDATION. ALL RIGHTS RESERVED.</p>
+        </div>
+    </footer>
+
+</body>
+</html>
