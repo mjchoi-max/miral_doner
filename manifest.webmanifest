@@ -1,0 +1,17 @@
+{
+  "name": "해외결연 아동 신규수급 등록",
+  "short_name": "아동등록",
+  "description": "인터넷 없이 현장에서 아동을 등록하고, 연결되면 시트로 내보냅니다.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F0F3F0",
+  "theme_color": "#12303A",
+  "lang": "ko",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
