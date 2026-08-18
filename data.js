@@ -7,7 +7,7 @@ const COUNTRIES=[
   {code:'VNM',ko:'베트남',en:'Vietnam'}, {code:'NPL',ko:'네팔',en:'Nepal'}];
 
 const SITES=[
-    {code:'TAS',country:'VMN',ko:'떤선',en:'Tan Son'},{code:'DTI',country:'NPL',ko:'다딩',en:'Dhading'}];
+    {code:'TAS',country:'VNM',ko:'떤선',en:'Tan Son'},{code:'DTI',country:'NPL',ko:'다딩',en:'Dhading'}];
 
 /* 선택지 — 저장되는 값은 항상 한국어(시트 값과 일치). 화면 표기만 번역됩니다. */
 const L={
