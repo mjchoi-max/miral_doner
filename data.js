@@ -447,5 +447,25 @@ const S={
   pullSame:['이미 최신입니다.','Already up to date.'],
   revNow:['현재 개정 %n','Revision %n'],
   fromHq:['본부에서 내려온 설정입니다. 여기서 고친 뒤 [본부에 저장하고 적용]을 눌러야 다른 기기에 전달됩니다.',
-          'These came from HQ. After editing, tap [Save to HQ and apply] to send them to the other devices.']
+          'These came from HQ. After editing, tap [Save to HQ and apply] to send them to the other devices.'],
+     fromHq:['본부에서 내려온 설정입니다. 여기서 고친 뒤 [본부에 저장하고 적용]을 눌러야 다른 기기에 전달됩니다.',
+          'These came from HQ. After editing, tap [Save to HQ and apply] to send them to the other devices.'],
+
+  /* ── 직원용 설치 링크 ── */
+  linkTitle:['직원용 설치 링크','Setup link for staff'],
+  linkBody:['직원은 이 링크를 한 번 열기만 하면 본부 주소와 전송키가 자동으로 채워집니다. 주소를 손으로 옮겨 적을 필요가 없습니다.',
+            'Staff only need to open this link once — the HQ address and key fill in automatically. Nothing to type.'],
+  linkMake:['링크와 QR 만들기','Create link and QR'],
+  linkCopy:['링크 복사','Copy link'],
+  linkCopied:['링크를 복사했습니다.','Link copied.'],
+  linkQr:['휴대폰 카메라로 이 QR을 찍으면 바로 열립니다.',
+          'Point a phone camera at this QR to open it.'],
+  linkWarn:['이 링크에는 전송키가 들어 있습니다. 비밀번호처럼 다루세요. 단체 대화방에 올리지 말고 직원에게 개별로 보내세요.',
+            'This link contains the upload key. Treat it like a password — send it to each person, not to a group chat.'],
+  linkNoUrl:['본부 전송 주소를 먼저 설정해야 링크를 만들 수 있습니다.',
+             'Set the HQ address first to create a link.'],
+  linkApplied:['본부 전송 설정을 받았습니다.','HQ connection settings applied.'],
+  linkPrint:['인쇄용으로 QR을 길게 눌러 이미지로 저장할 수 있습니다.',
+             'Long-press the QR to save it as an image for printing.']
+};
 };
