@@ -448,9 +448,7 @@ const S={
   revNow:['현재 개정 %n','Revision %n'],
   fromHq:['본부에서 내려온 설정입니다. 여기서 고친 뒤 [본부에 저장하고 적용]을 눌러야 다른 기기에 전달됩니다.',
           'These came from HQ. After editing, tap [Save to HQ and apply] to send them to the other devices.'],
-     fromHq:['본부에서 내려온 설정입니다. 여기서 고친 뒤 [본부에 저장하고 적용]을 눌러야 다른 기기에 전달됩니다.',
-          'These came from HQ. After editing, tap [Save to HQ and apply] to send them to the other devices.'],
-
+   
   /* ── 직원용 설치 링크 ── */
   linkTitle:['직원용 설치 링크','Setup link for staff'],
   linkBody:['직원은 이 링크를 한 번 열기만 하면 본부 주소와 전송키가 자동으로 채워집니다. 주소를 손으로 옮겨 적을 필요가 없습니다.',
