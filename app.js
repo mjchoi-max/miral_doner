@@ -358,6 +358,32 @@ async function importCSV(file){
   }catch(e){toast(t('impFail'));}
 }
 
+/* ══════════════ 직원용 설치 링크 ══════════════
+   본부 주소와 전송키를 링크 하나에 담습니다. 직원은 열기만 하면 됩니다.
+   주소창에 키가 남지 않도록, 읽어서 저장한 뒤 곧바로 지웁니다. */
+const b64e=o=>btoa(unescape(encodeURIComponent(JSON.stringify(o))))
+  .replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+const b64d=t=>JSON.parse(decodeURIComponent(escape(
+  atob(t.replace(/-/g,'+').replace(/_/g,'/')))));
+
+function setupLink(){
+  return location.origin+location.pathname+'#setup='+b64e({u:state.hqUrl,k:state.hqKey});
+}
+/* 링크로 들어온 경우 — 설정을 심고 주소를 깨끗하게 만듭니다 */
+async function readSetupLink(){
+  const m=/[#&]setup=([A-Za-z0-9\-_]+)/.exec(location.hash||'');
+  if(!m)return false;
+  history.replaceState(null,'',location.pathname+location.search);
+  try{
+    const o=b64d(m[1]);
+    if(!o||!o.u)return false;
+    state.hqUrl=o.u;state.hqKey=o.k||'';
+    await saveSettings();
+    toast(t('linkApplied'));
+    return true;
+  }catch(e){return false;}
+}
+
 /* ══════════════════════════════════════════════════════════════
    관리자 페이지
    국가·사업장 목록과 등록 항목의 사용 여부를 정합니다.
@@ -502,6 +528,10 @@ function adminEtc(){
       <input type="text" id="pNew" placeholder="${esc(t('pinNew'))}">
       <p class="err" id="ePNew"></p>
       <button class="ghost jade mt8" id="pSave">${t('adminEnter')}</button></div>
+    <div class="exp"><h3>${t('linkTitle')}</h3>
+      <p>${state.hqUrl?t('linkBody'):t('linkNoUrl')}</p>
+      <button class="ghost jade" id="lMake" ${state.hqUrl?'':'disabled'}>${t('linkMake')}</button>
+      <div id="linkOut"></div></div>
     <div class="exp"><h3>${t('cfgExport')}</h3>
       <p>${t('adminNote')}</p>
       <button class="ghost jade" id="cOut">${t('cfgExport')}</button></div>
@@ -510,6 +540,24 @@ function adminEtc(){
     <div class="exp"><h3>${t('cfgReset')}</h3>
       <p>${t('cfgResetAsk')}</p>
       <button class="ghost rust" id="cRst">${t('cfgReset')}</button></div>`;
+  const lm=$('lMake');
+  if(lm)lm.onclick=()=>{
+    const url=setupLink();
+    $('linkOut').innerHTML=`
+      <div class="linkbox">${esc(url)}</div>
+      <div class="qc-btns"><button class="ghost jade" id="lCopy">${t('linkCopy')}</button></div>
+      <div class="qrbox" id="qr"></div>
+      <p class="qc-note">${t('linkQr')} ${t('linkPrint')}</p>
+      <div class="safeguard" style="margin-top:10px">${t('linkWarn')}</div>`;
+    try{
+      const q=qrcode(0,'M');q.addData(url);q.make();
+      $('qr').innerHTML=q.createSvgTag({scalable:true});
+    }catch(e){$('qr').textContent='QR: '+e.message;}
+    $('lCopy').onclick=async()=>{
+      try{await navigator.clipboard.writeText(url);toast(t('linkCopied'));}
+      catch(e){const r=document.createRange();r.selectNodeContents($('linkOut').firstElementChild);
+        const sel=getSelection();sel.removeAllRanges();sel.addRange(r);}};
+  };
   const pub=$('cPub');
   if(pub)pub.onclick=async()=>{
     const pin=prompt(t('pubAsk'));
@@ -919,6 +967,7 @@ window.addEventListener('offline',topbar);
   state.cfg={...newCfg(),...((await DB.get('kv','config'))||{})};
   const s=await DB.get('kv','settings');
   if(s)Object.assign(state,s);
+  await readSetupLink();
   /* data.js 의 SERVER 에 값을 넣어두면 직원이 주소를 입력하지 않아도 됩니다 */
   if(!state.hqUrl&&typeof SERVER!=='undefined'&&SERVER.url){
     state.hqUrl=SERVER.url;state.hqKey=SERVER.key||'';}

@@ -1,7 +1,7 @@
 /* 오프라인 캐시 — 파일을 고치면 CACHE 이름의 숫자를 올려주세요. */
-const CACHE='child-intake-v6';
+const CACHE='child-intake-v7';
 const FILES=['./','./index.html','./app.css','./data.js','./sync.js','./app.js',
-             './vendor-jszip.min.js','./vendor-pico.js','./photocheck.js','./facefinder',
+             './vendor-jszip.min.js','./vendor-pico.js','./vendor-qrcode.js','./photocheck.js','./facefinder',
              './manifest.webmanifest',
              './icons/icon-192.png','./icons/icon-512.png','./icons/icon-180.png'];
 
