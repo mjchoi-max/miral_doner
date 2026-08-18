@@ -80,7 +80,7 @@ const TOGGLE_FIELDS=[
 
 /* 본부 수신 서버 — 배포한 Apps Script 웹앱 주소와 전송키.
    여기에 미리 넣어두면 직원이 설정 화면에서 입력하지 않아도 됩니다. */
-const SERVER={url:''};   /* 예: {url:'https://script.google.com/macros/s/AKf.../exec', key:''} */
+const SERVER={url:'', key:''};   /* 예: {url:'https://script.google.com/macros/s/AKf.../exec', key:''} */
 
 /* ══════════════ 화면 문구 [한국어, English] ══════════════ */
 const S={
