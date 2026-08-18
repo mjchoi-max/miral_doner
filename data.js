@@ -80,7 +80,7 @@ const TOGGLE_FIELDS=[
 
 /* 본부 수신 서버 — 배포한 Apps Script 웹앱 주소와 전송키.
    여기에 미리 넣어두면 직원이 설정 화면에서 입력하지 않아도 됩니다. */
-const SERVER={url:'https://script.google.com/macros/s/AKfycbx7rdAXC4jhTyTRe4iFo1pVdOH2W5UUaRVuZstRsVjlI4pxcuUcEwmGP3nwrE91oUqcUA/exec',key:'Miral-child-intake'};   /* 예: {url:'https://script.google.com/macros/s/AKf.../exec', key:'우리조직전송키'} */
+const SERVER={url:'https://script.google.com/macros/s/AKfycbxVYyDIfniN4hCqUS0fZuj07fNtjfcY_39JblvHQSkzgeHvgtY9Y6JF9QVPH2ZoMQzVQA/exec'};   /* 예: {url:'https://script.google.com/macros/s/AKf.../exec', key:'Miral-child-intake'} */
 
 /* ══════════════ 화면 문구 [한국어, English] ══════════════ */
 const S={
