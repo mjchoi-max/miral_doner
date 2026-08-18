@@ -4,7 +4,7 @@
    ══════════════════════════════════════════════════════════════ */
 
 const COUNTRIES=[
-  {code:'VNM',ko:'베트남',en:'Vietnam'}, {code:'NPL',ko:'네팔',en:'Nepal'};
+  {code:'VNM',ko:'베트남',en:'Vietnam'}, {code:'NPL',ko:'네팔',en:'Nepal'}];
 
 const SITES=[
   {code:'TAS',country:'VNM',ko:'떤선',en:'Tan Son'},{code:'DTI',country:'NPL',ko:'다딩',en:'Dhading'};
