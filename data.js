@@ -468,4 +468,3 @@ const S={
   linkPrint:['인쇄용으로 QR을 길게 눌러 이미지로 저장할 수 있습니다.',
              'Long-press the QR to save it as an image for printing.']
 };
-};
