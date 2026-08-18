@@ -18,8 +18,8 @@ const countryName=c=>nm(allCountries().find(x=>x.code===c));
 /* ══════════════ 관리자 설정 ══════════════
    기본 목록(data.js)에 관리자가 더한 항목을 합치고, 꺼둔 항목을 걸러냅니다.
    기본 목록 자체는 건드리지 않으므로 언제든 초기화할 수 있습니다. */
-const newCfg=()=>({pin:(typeof ADMIN!=='undefined'&&ADMIN.pin)||'2026',
-  off:{countries:[],sites:[]},add:{countries:[],sites:[]},fields:{}});
+const newCfg=()=>({rev:0,pin:(typeof ADMIN!=='undefined'&&ADMIN.pin)||'2026',
+  off:{countries:[],sites:[]},add:{countries:[],sites:[]}});
 const allCountries=()=>COUNTRIES.concat(state.cfg.add.countries);
 const allSites=()=>SITES.concat(state.cfg.add.sites);
 const onCountries=()=>allCountries().filter(c=>!state.cfg.off.countries.includes(c.code));
@@ -372,7 +372,7 @@ function renderAdmin(){
   const tab=state.adminTab;
   $('vHome').innerHTML=`
     <p class="eyebrow">${t('adminEyebrow')}</p><h1>${t('adminTitle')}</h1>
-    <p class="lede">${t('adminNote')}</p>
+    <p class="lede">${state.hqUrl?t('pubBody'):t('adminNote')}</p>
     <div class="scope" style="margin-bottom:18px">
       <button id="tP" aria-pressed="${tab==='place'}">${t('tabPlace')}</button>
       <button id="tE" aria-pressed="${tab==='etc'}">${t('tabEtc')}</button>
@@ -419,6 +419,7 @@ function adminPlace(){
     </div>`;
 
   $('adminBody').innerHTML=`
+    ${state.hqUrl?`<p class="hint" style="margin-bottom:12px">${t('fromHq')}</p>`:''}
     <div class="list-h"><h2>${t('cList')}</h2><span>${onCountries().length} / ${allCountries().length}</span></div>
     ${allCountries().map(c=>row(c,offC.includes(c.code),addedC.includes(c.code),uC.has(c.code),'country')).join('')}
     ${state.adminAdd==='country'?addForm('country'):`<button class="ghost mt8" id="addC">${t('addCountry')}</button>`}
@@ -491,6 +492,12 @@ function bindAddForm(){
 /* ── 관리 ── */
 function adminEtc(){
   $('adminBody').innerHTML=`
+    <div class="exp"><h3>${t('pubTitle')}</h3>
+      <p>${state.hqUrl?t('pubBody'):t('pubNoUrl')}</p>
+      <p class="qc-note">${f('revNow',{'%n':state.cfg.rev||0})}</p>
+      <button class="ghost jade" id="cPub" ${state.hqUrl?'':'disabled'}>${t('pubBtn')}</button>
+      <div class="mt8"><button class="ghost" id="cPull" ${state.hqUrl?'':'disabled'}>${t('pullBtn')}</button></div>
+    </div>
     <div class="exp"><h3>${t('pinChange')}</h3>
       <input type="text" id="pNew" placeholder="${esc(t('pinNew'))}">
       <p class="err" id="ePNew"></p>
@@ -503,6 +510,20 @@ function adminEtc(){
     <div class="exp"><h3>${t('cfgReset')}</h3>
       <p>${t('cfgResetAsk')}</p>
       <button class="ghost rust" id="cRst">${t('cfgReset')}</button></div>`;
+  const pub=$('cPub');
+  if(pub)pub.onclick=async()=>{
+    const pin=prompt(t('pubAsk'));
+    if(pin===null)return;
+    pub.disabled=true;
+    const r=await Sync.pushConfig(pin).catch(e=>({ok:false,error:String(e)}));
+    pub.disabled=false;
+    if(r&&r.ok)toast(f('pubDone',{'%n':r.rev}));
+    else toast(f('pubFail',{'%e':(r&&r.error)||'?'}));
+    render();};
+  const pull=$('cPull');
+  if(pull)pull.onclick=async()=>{
+    const ch=await Sync.pullConfig().catch(()=>false);
+    toast(ch?t('pullDone'):t('pullSame'));render();};
   $('pSave').onclick=async()=>{
     const v=$('pNew').value.trim();
     if(v.length<4){const e=$('ePNew');e.textContent=t('pinShort');e.classList.add('show');return;}
@@ -915,6 +936,8 @@ window.addEventListener('offline',topbar);
 
   show(state.site?'home':'setup');
 
+  if(state.hqUrl&&navigator.onLine)
+    Sync.pullConfig().then(ch=>{if(ch&&state.view!=='step')render();}).catch(()=>{});
   if(typeof PhotoCheck!=='undefined')PhotoCheck.init('facefinder');
   if(state.hqUrl&&navigator.onLine)setTimeout(()=>runSync(false),1500);
   if(navigator.storage&&navigator.storage.persist)navigator.storage.persist();

@@ -79,6 +79,7 @@ async function run(opts){
     if(o.onProgress)o.onProgress(i+1,queue.length);
   }
   try{await roster();}catch(e){}
+  try{if(await pullConfig()&&state.view!=='step')render();}catch(e){}
   running=false;state.syncing=false;state.syncErr=failed?lastErr:'';
   state.lastSync=today();
   await saveSettings();
@@ -101,10 +102,33 @@ async function roster(){
   return rows.length;
 }
 
+/* ── 본부 설정 받아오기 ──
+   본부 담당자가 정한 국가·사업장 목록을 그대로 따릅니다.
+   개정 번호가 이 기기의 것보다 클 때만 덮어씁니다. */
+async function pullConfig(){
+  if(!state.hqUrl)return false;
+  const j=await post(state.hqUrl,{action:'config',key:state.hqKey});
+  if(!j||!j.ok||!j.cfg)return false;
+  const rev=Number(j.rev||0);
+  if(rev<=Number(state.cfg.rev||0))return false;
+  state.cfg={...newCfg(),...j.cfg,rev:rev};
+  await saveCfg();
+  return true;
+}
+
+/* ── 본부 설정 올리기 (관리자만) ── */
+async function pushConfig(adminPin){
+  if(!state.hqUrl)return {ok:false,error:'noUrl'};
+  const cfg={...state.cfg};
+  const j=await post(state.hqUrl,{action:'configSave',key:state.hqKey,adminPin:adminPin,cfg:cfg});
+  if(j&&j.ok){state.cfg.rev=Number(j.rev||0);await saveCfg();}
+  return j||{ok:false,error:'noReply'};
+}
+
 async function test(url,key){
   const j=await post(url,{action:'ping',key});
   return j.site||j.sheet||'ok';
 }
 
-return {run,roster,pending,test,isRunning:()=>running};
+return {run,roster,pending,test,pullConfig,pushConfig,isRunning:()=>running};
 })();

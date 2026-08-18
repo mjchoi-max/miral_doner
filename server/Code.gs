@@ -14,7 +14,8 @@ const CONFIG = {
   MASTER_TAB: '아동마스터',
   PHOTO_TAB:  '사진',
   FOLDER_ID:  '여기에_드라이브_폴더_ID',   // 사진이 저장될 폴더
-  KEY:        '여기에_전송키',              // 앱 설정의 전송키와 같아야 합니다
+  KEY:        '여기에_전송키',
+  ADMIN_PIN:  '여기에_관리자_비밀번호',   // 관리자 설정을 저장할 때만 씁니다              // 앱 설정의 전송키와 같아야 합니다
   SEQ_PAD:    4
 };
 
@@ -35,6 +36,8 @@ function doPost(e) {
     if (req.action === 'ping')   return out({ ok: true, sheet: book().getName() });
     if (req.action === 'roster') return out(roster(req.site));
     if (req.action === 'record') return out(record(req));
+    if (req.action === 'config') return out(configGet());
+    if (req.action === 'configSave') return out(configSave(req));
     return out({ ok: false, error: '알 수 없는 요청: ' + req.action });
   } catch (err) {
     return out({ ok: false, error: String(err) });
@@ -195,6 +198,50 @@ function savePhoto(b64, name) {
   const blob   = Utilities.newBlob(Utilities.base64Decode(b64), 'image/jpeg', name);
   folder.createFile(blob);
   return name;
+}
+
+/* ── 관리자 설정 ─────────────────────────────────────────────
+   본부 담당자 한 사람이 정한 국가·사업장 목록을 시트에 보관하고,
+   각 기기가 전송할 때마다 받아가서 그대로 따릅니다.
+   rev(개정 번호)가 기기에 있는 값보다 클 때만 덮어씁니다. */
+const CONFIG_TAB = '설정';
+
+function configSheet() {
+  const sh = tab(CONFIG_TAB, ['항목', '값', '개정번호', '갱신일시']);
+  if (sh.getLastRow() < 2) sh.appendRow(['관리자설정', '', 0, new Date()]);
+  return sh;
+}
+
+function configGet() {
+  const sh = configSheet();
+  const row = sh.getRange(2, 1, 1, 4).getValues()[0];
+  const rev = Number(row[2] || 0);
+  let cfg = null;
+  if (row[1]) { try { cfg = JSON.parse(row[1]); } catch (e) { cfg = null; } }
+  return { ok: true, rev: rev, cfg: cfg, 갱신일시: row[3] ? String(row[3]) : '' };
+}
+
+function configSave(req) {
+  /* 전송키만으로는 부족합니다. 전송키는 모든 직원 기기에 들어 있으므로,
+     전 기기에 퍼지는 설정을 바꾸는 일은 관리자 비밀번호까지 맞아야 합니다. */
+  if (!CONFIG.ADMIN_PIN || CONFIG.ADMIN_PIN.indexOf('여기에') === 0)
+    return { ok: false, error: '서버에 관리자 비밀번호가 설정되지 않았습니다' };
+  if (req.adminPin !== CONFIG.ADMIN_PIN)
+    return { ok: false, error: '관리자 비밀번호가 다릅니다' };
+  if (!req.cfg) return { ok: false, error: '저장할 설정이 없습니다' };
+
+  const lock = LockService.getScriptLock();
+  if (!lock.tryLock(15000)) return { ok: false, error: '서버가 바쁩니다' };
+  try {
+    const sh = configSheet();
+    const rev = Number(sh.getRange(2, 3).getValue() || 0) + 1;
+    const cfg = req.cfg;
+    cfg.rev = rev;
+    sh.getRange(2, 1, 1, 4).setValues([['관리자설정', JSON.stringify(cfg), rev, new Date()]]);
+    return { ok: true, rev: rev };
+  } finally {
+    lock.releaseLock();
+  }
 }
 
 /* ── 명단 회신 ───────────────────────────────────────────────

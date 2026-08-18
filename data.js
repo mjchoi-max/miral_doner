@@ -4,19 +4,10 @@
    ══════════════════════════════════════════════════════════════ */
 
 const COUNTRIES=[
-  {code:'ETH',ko:'에티오피아',en:'Ethiopia'},{code:'KEN',ko:'케냐',en:'Kenya'},
-  {code:'UGA',ko:'우간다',en:'Uganda'},   {code:'TZA',ko:'탄자니아',en:'Tanzania'},
-  {code:'VNM',ko:'베트남',en:'Vietnam'},  {code:'KHM',ko:'캄보디아',en:'Cambodia'},
-  {code:'NPL',ko:'네팔',en:'Nepal'},      {code:'PHL',ko:'필리핀',en:'Philippines'},
-  {code:'BGD',ko:'방글라데시',en:'Bangladesh'}];
+  {code:'VNM',ko:'베트남',en:'Vietnam'}, {code:'NPL',ko:'네팔',en:'Nepal'};
 
 const SITES=[
-  {code:'HWS',country:'ETH',ko:'하와사',en:'Hawassa'},   {code:'ADM',country:'ETH',ko:'아다마',en:'Adama'},
-  {code:'NRB',country:'KEN',ko:'나이로비',en:'Nairobi'}, {code:'KSM',country:'KEN',ko:'키수무',en:'Kisumu'},
-  {code:'KLA',country:'UGA',ko:'캄팔라',en:'Kampala'},   {code:'DOD',country:'TZA',ko:'도도마',en:'Dodoma'},
-  {code:'HGG',country:'VNM',ko:'하장',en:'Ha Giang'},    {code:'QNM',country:'VNM',ko:'꽝남',en:'Quang Nam'},
-  {code:'KPT',country:'KHM',ko:'캄퐁톰',en:'Kampong Thom'},{code:'DTI',country:'NPL',ko:'다딩',en:'Dhading'},
-  {code:'RNG',country:'BGD',ko:'랑푸르',en:'Rangpur'},   {code:'LEY',country:'PHL',ko:'레이테',en:'Leyte'}];
+  {code:'TAS',country:'VNM',ko:'떤선',en:'Tan Son'},{code:'DTI',country:'NPL',ko:'다딩',en:'Dhading'};
 
 /* 선택지 — 저장되는 값은 항상 한국어(시트 값과 일치). 화면 표기만 번역됩니다. */
 const L={
@@ -53,6 +44,11 @@ const MASTER_COLS=['아동코드','국가코드','사업장코드','연번','등
 const PHOTO_COLS=['사진ID','아동코드','촬영일','사진유형','사진파일','촬영자','촬영기준확인','비고'];
 
 const STEPS=['basic','photo','family','edu','story','consent'];
+
+/* 본부 수신 서버 — 배포한 Apps Script 웹앱 주소와 전송키.
+   여기에 미리 넣어두면 직원이 설정 화면에서 입력하지 않아도 됩니다.
+   저장소가 공개(Public)라면 비워두세요. 키가 인터넷에 노출됩니다. */
+const SERVER={url:'',key:''};
 
 /* 관리자 페이지 기본 비밀번호 — 배포 전에 바꾸세요. 앱 안에서도 바꿀 수 있습니다. */
 const ADMIN={pin:'2026'};
@@ -433,5 +429,23 @@ const S={
   pinChange:['관리자 비밀번호 변경','Change the admin password'],
   pinNew:['새 비밀번호','New password'],
   pinSaved:['비밀번호를 바꿨습니다.','Password changed.'],
-  pinShort:['4자 이상으로 정해주세요.','Use at least 4 characters.']
+  pinShort:['4자 이상으로 정해주세요.','Use at least 4 characters.'],
+
+  /* ── 본부 설정 배포 ── */
+  pubTitle:['전 기기에 적용','Apply to every device'],
+  pubBody:['지금 설정을 본부에 저장합니다. 각 직원 휴대폰이 다음 전송 때 자동으로 받아갑니다. 직원이 따로 할 일은 없습니다.',
+           'Saves these settings to HQ. Every staff phone picks them up on its next upload. Staff do not need to do anything.'],
+  pubBtn:['본부에 저장하고 적용','Save to HQ and apply'],
+  pubAsk:['관리자 비밀번호를 한 번 더 입력하세요.','Enter the admin password once more.'],
+  pubDone:['본부에 저장했습니다. 각 기기가 다음 전송 때 받아갑니다. (개정 %n)',
+           'Saved to HQ. Devices will pick it up on their next upload. (revision %n)'],
+  pubFail:['본부에 저장하지 못했습니다: %e','Could not save to HQ: %e'],
+  pubNoUrl:['본부 전송 주소가 없어 이 기기에만 적용됩니다.',
+            'No HQ address is set, so this applies to this device only.'],
+  pullBtn:['본부 설정 다시 받기','Fetch HQ settings again'],
+  pullDone:['본부 설정을 받았습니다.','HQ settings applied.'],
+  pullSame:['이미 최신입니다.','Already up to date.'],
+  revNow:['현재 개정 %n','Revision %n'],
+  fromHq:['본부에서 내려온 설정입니다. 여기서 고친 뒤 [본부에 저장하고 적용]을 눌러야 다른 기기에 전달됩니다.',
+          'These came from HQ. After editing, tap [Save to HQ and apply] to send them to the other devices.']
 };
