@@ -26,26 +26,17 @@ const onCountries=()=>allCountries().filter(c=>!state.cfg.off.countries.includes
 const onSites=()=>allSites().filter(s=>!state.cfg.off.sites.includes(s.code));
 const saveCfg=()=>DB.put('kv',state.cfg,'config');
 
-/* 항목 상태 — 'req' 필수 · 'opt' 선택 · 'off' 사용 안 함 */
-const FALIAS={'미취학사유':'학년'};
-const fkey=k=>FALIAS[k]||k;
-const fdef=k=>{const d=TOGGLE_FIELDS.find(f=>f.k===fkey(k));return d?d.def:'req';};
-const fst=k=>state.cfg.fields[fkey(k)]||fdef(k);
-const fon=k=>fst(k)!=='off';
-const freq=k=>fst(k)==='req';
-/* 항목이 꺼져 있으면 화면에서 아예 빠집니다 */
-const F=(k,build)=>fon(k)?build(freq(k)):'';
 /* 현지 시각 기준 — toISOString()은 UTC라 시차가 있는 사업장에서 날짜가 틀어집니다 */
 const today=()=>{const n=new Date();return `${n.getFullYear()}-${p2(n.getMonth()+1)}-${p2(n.getDate())}`;};
 const age=dob=>dob?Math.floor((Date.now()-new Date(dob))/31557600000):null;
 const d=()=>state.draft;
-/* 기기에서 만드는 고유 기록ID — 이 값으로 본부가 같은 건인지 알아봅니다 */
-const uuid=()=>(crypto.randomUUID?crypto.randomUUID()
-  :'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{
-     const r=Math.random()*16|0;return (c==='x'?r:(r&0x3|0x8)).toString(16);}));
 
 function toast(m){const el=$('toast');el.textContent=m;el.classList.add('show');
   clearTimeout(toast._t);toast._t=setTimeout(()=>el.classList.remove('show'),2800);}
+
+/* 기기에서 만드는 고유 기록ID — 이 값으로 본부가 같은 건인지 알아봅니다 */
+const uuid=()=>(self.crypto&&crypto.randomUUID)?crypto.randomUUID()
+  :'r-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,10);
 
 /* ══════════════ 저장소 (IndexedDB) ══════════════
    기기에 그대로 남습니다. 탭을 닫아도, 배터리가 나가도 유지됩니다. */
@@ -125,7 +116,7 @@ async function compress(file,max=1000){
 }
 
 /* ══════════════ 중복 감지 ══════════════
-   강한 의심 : 영문이름 + 생년월일 + 성별 모두 일치
+   강한 의심 : 아동 이름 + 생년월일 + 성별 모두 일치
    약한 의심 : 같은 사업장 + 생년월일 일치 (형제자매·쌍둥이)
    이 기기 등록분과 불러온 본부 명단을 함께 대조합니다. */
 function findDup(x){
@@ -133,7 +124,7 @@ function findDup(x){
   const pool=state.records.map(r=>({r,src:'dev'})).concat(state.roster.map(r=>({r,src:'hq'})));
   pool.forEach(({r,src})=>{
     if(r._id&&r._id===x._id)return;
-    const sameName=x.영문이름&&norm(r.영문이름)===norm(x.영문이름);
+    const sameName=x.현지어이름&&norm(r.현지어이름)===norm(x.현지어이름);
     const sameDob =x.생년월일&&r.생년월일===x.생년월일;
     const sameSex =x.성별&&r.성별===x.성별;
     if(sameName&&sameDob&&sameSex)strong.push({r,src});
@@ -146,9 +137,9 @@ function dupCard({r,src:from}){
   const a=age(r.생년월일);
   const badge=from==='hq'?`<span class="src hq">${t('srcHq')}</span>`:`<span class="src dev">${t('srcDev')}</span>`;
   return `<div class="dupcard">${img}<div class="dupcard-m">
-    <div class="dupcard-n">${esc(r.영문이름||r.현지어이름||'—')}${badge}</div>
+    <div class="dupcard-n">${esc(r.현지어이름||'—')}${badge}</div>
     <div class="dupcard-c">${esc(r.아동코드||t('codePending'))}</div>
-    <div class="dupcard-d">${esc(r.생년월일)}${a!==null?` · ${a}${t('yrs')}`:''} · ${esc(ov('성별',r.성별))}${r.주보호자?' · '+esc(ov('주보호자',r.주보호자)):''}</div>
+    <div class="dupcard-d">${esc(r.생년월일)}${a!==null?` · ${a}${t('yrs')}`:''} · ${esc(ov('성별',r.성별))}</div>
   </div></div>`;
 }
 function dupHTML(){
@@ -275,7 +266,7 @@ function renderHome(){
     <p class="eyebrow">${t('homeEyebrow')}</p><h1>${t('homeTitle')}</h1>
     <p class="lede">${t('homeLede')}</p>
     ${dr?`<div class="resume"><h3>${t('resumeTitle')}</h3>
-      <p>${f('resumeBody',{'%c':esc(dr.영문이름||dr.현지어이름||t('noName')),'%s':state.step+1})}</p>
+      <p>${f('resumeBody',{'%c':esc(dr.현지어이름||t('noName')),'%s':state.step+1})}</p>
       <div class="two"><button class="primary" id="bResume">${t('resumeGo')}</button>
       <button class="ghost rust" id="bDrop">${t('resumeDrop')}</button></div></div>`:''}
     <div class="stats">
@@ -298,7 +289,7 @@ function renderHome(){
 
   $('rl').innerHTML=state.records.length?state.records.slice().reverse().map(r=>`
     <div class="row">${r._face?`<img class="thumb" src="${src(r._face)}" alt="">`:`<div class="thumb"></div>`}
-      <div class="row-m"><div class="row-n">${esc(r.영문이름||r.현지어이름||'—')}</div>
+      <div class="row-m"><div class="row-n">${esc(r.현지어이름||'—')}</div>
       <div class="row-c">${esc(r.아동코드||t('codePending'))}</div></div>
       <span class="tag ${r._sync==='sent'?'out':'pend'}">${r._sync==='sent'?t('tagSent'):t('tagWaiting')}</span></div>`).join('')
     :`<div class="empty">${t('emptyList')}</div>`;
@@ -350,16 +341,14 @@ async function importCSV(file){
     const rows=parseCSV(await file.text());
     if(rows.length<2)throw 0;
     const head=rows[0].map(h=>h.trim()),idx=k=>head.indexOf(k);
-    const iName=idx('영문이름'),iDob=idx('생년월일');
+    const iName=idx('현지어이름'),iDob=idx('생년월일');
     if(iName<0||iDob<0)throw 0;
-    const iCode=idx('아동코드'),iSex=idx('성별'),iSite=idx('사업장코드'),
-          iLocal=idx('현지어이름'),iCare=idx('주보호자');
+    const iCode=idx('아동코드'),iSex=idx('성별'),iSite=idx('사업장코드');
     const out=rows.slice(1).map((r,n)=>({
       아동코드:(iCode>=0?r[iCode]:'')||`HQ-${n+1}`,
-      영문이름:r[iName]||'',생년월일:r[iDob]||'',성별:iSex>=0?r[iSex]:'',
-      사업장코드:iSite>=0?r[iSite]:'',현지어이름:iLocal>=0?r[iLocal]:'',
-      주보호자:iCare>=0?r[iCare]:''
-    })).filter(r=>r.영문이름||r.생년월일);
+      현지어이름:r[iName]||'',생년월일:r[iDob]||'',성별:iSex>=0?r[iSex]:'',
+      사업장코드:iSite>=0?r[iSite]:''
+    })).filter(r=>r.현지어이름||r.생년월일);
     if(!out.length)throw 0;
     await DB.bulk('roster',out);
     state.roster=await DB.all('roster');
@@ -386,16 +375,14 @@ function renderAdmin(){
     <p class="lede">${t('adminNote')}</p>
     <div class="scope" style="margin-bottom:18px">
       <button id="tP" aria-pressed="${tab==='place'}">${t('tabPlace')}</button>
-      <button id="tF" aria-pressed="${tab==='field'}">${t('tabField')}</button>
       <button id="tE" aria-pressed="${tab==='etc'}">${t('tabEtc')}</button>
     </div>
     <div id="adminBody"></div>
     <div class="mt16"><button class="ghost" id="aLock">${t('adminLock')}</button></div>`;
   $('tP').onclick=()=>{state.adminTab='place';state.adminAdd='';render();};
-  $('tF').onclick=()=>{state.adminTab='field';state.adminAdd='';render();};
   $('tE').onclick=()=>{state.adminTab='etc';state.adminAdd='';render();};
   $('aLock').onclick=()=>{state.adminOk=false;show('home');};
-  ({place:adminPlace,field:adminField,etc:adminEtc})[tab]();
+  ({place:adminPlace,etc:adminEtc})[tab]();
 }
 
 function renderAdminLock(){
@@ -501,28 +488,6 @@ function bindAddForm(){
     state.adminAdd='';toast(t('adminSaved'));render();};
 }
 
-/* ── 등록 항목 ── */
-function adminField(){
-  const opts=[['req',t('fReq')],['opt',t('fOpt')],['off',t('fOff')]];
-  $('adminBody').innerHTML=`
-    <p class="hint" style="margin-bottom:14px">${t('fieldLede')}</p>
-    ${TOGGLE_FIELDS.map(f=>`
-      <div class="frow">
-        <div class="arow-n">${esc(t(f.s))}</div>
-        <div class="chips" data-fk="${f.k}">
-          ${opts.map(([v,l])=>`<button type="button" class="chip mini" data-v="${v}"
-            aria-pressed="${fst(f.k)===v}">${l}</button>`).join('')}
-        </div>
-      </div>`).join('')}
-    <div class="guide mt16"><h3>${t('lockedTitle')}</h3>
-      <p style="margin:0">${t('lockedList')}</p></div>`;
-  $('adminBody').querySelectorAll('[data-fk]').forEach(box=>{
-    box.onclick=async e=>{
-      const b=e.target.closest('.chip'); if(!b)return;
-      state.cfg.fields[box.dataset.fk]=b.dataset.v;
-      await saveCfg();render();};});
-}
-
 /* ── 관리 ── */
 function adminEtc(){
   $('adminBody').innerHTML=`
@@ -568,7 +533,7 @@ function renderStep(){
   $('btnNext').textContent=state.step===STEPS.length-1?t('finish'):t('next');
   $('stepBody').innerHTML=({basic:sBasic,photo:sPhoto,family:sFamily,edu:sEdu,story:sStory,consent:sConsent})[key]();
   bindIn($('stepBody'));
-  ['영문이름','생년월일'].forEach(k=>{const el=$('f_'+k);if(el)el.onblur=refreshDup;});
+  ['현지어이름','생년월일'].forEach(k=>{const el=$('f_'+k);if(el)el.onblur=refreshDup;});
   window.scrollTo({top:0,behavior:'instant'});
 }
 
@@ -586,6 +551,15 @@ function chips(k,label,o={}){return `<div class="field">
   <p class="lbl">${label}${o.req?' <span class="req">*</span>':''}</p>
   ${o.hint?`<p class="hint">${o.hint}</p>`:''}
   <div class="chips" data-c="${k}">${L[k].map(v=>`<button type="button" class="chip" data-v="${esc(v)}" aria-pressed="${d()[k]===v}">${esc(ov(k,v))}</button>`).join('')}</div>
+  <p class="err" id="e_${k}"></p></div>`;}
+/* 여러 개를 함께 고르는 선택지 — 값은 쉼표로 이어 붙여 한 칸에 저장합니다 */
+const mvals=k=>String(d()[k]||'').split(',').map(v=>v.trim()).filter(Boolean);
+function multi(k,label,o={}){
+  const on=mvals(k);
+  return `<div class="field">
+  <p class="lbl">${label}${o.req?' <span class="req">*</span>':''}</p>
+  ${o.hint?`<p class="hint">${o.hint}</p>`:''}
+  <div class="chips" data-m="${k}">${L[k].map(v=>`<button type="button" class="chip" data-v="${esc(v)}" aria-pressed="${on.includes(v)}">${esc(ov(k,v))}</button>`).join('')}</div>
   <p class="err" id="e_${k}"></p></div>`;}
 function shot(id,fld,title,sub,ar){return d()[fld]
   ? `<div class="shot filled" style="aspect-ratio:${ar}"><img src="${src(d()[fld])}" alt="">
@@ -636,20 +610,19 @@ function qcNote(r,fld){
 function sBasic(){
   return `<div class="codebox"><p>${t('assigned')}</p><b>${t('codePending')}</b>
       <small>${t('assignedNote')}</small></div><div id="dupBox">${dupHTML()}</div>`
-   + F('현지어이름',r=>txt('현지어이름',t('localName'),{req:r,ph:t('localNamePh')}))
-   + txt('영문이름',t('engName'),{req:true,hint:t('engNameHint'),ph:'ABEBE TESFAYE'})
+   + txt('현지어이름',t('localName'),{req:true,hint:t('localNameHint'),ph:t('localNamePh')})
    + chips('성별',t('sex'),{req:true})
    + txt('생년월일',t('dob'),{req:true,type:'date'})
    + `<label class="check ${d().생년월일추정==='예'?'on':''}" data-f="생년월일추정" style="margin:-6px 0 16px">
         <input type="checkbox" ${d().생년월일추정==='예'?'checked':''}><span>${t('dobEst')}</span></label>`
-   + F('출생등록',r=>chips('출생등록',t('birthReg'),{req:r}));
+   + chips('출생등록',t('birthReg'),{req:true});
 }
 function sPhoto(){
   const g=['solo','face','light','dress','bg'];
   return shot('face','_face',t('shotFace'),t('shotFaceSub'),'3/4')
    + qcBox('_face')
    + `<p class="err" id="e_face"></p>
-      ${fon('_full')?`<div class="mt10">${shot('full','_full',t('shotFull'),t('shotFullSub'),'3/4')}${qcBox('_full')}</div>`:''}
+      <div class="mt10">${shot('full','_full',t('shotFull'),t('shotFullSub'),'3/4')}${qcBox('_full')}</div>
       <div class="guide"><h3>${t('guideTitle')}</h3><p>${t('guideSub')}</p>
         ${g.map(k=>`<label class="check ${d()._guide[k]?'on':''}" data-g="${k}">
           <input type="checkbox" ${d()._guide[k]?'checked':''}><span>${t('g_'+k)}</span></label>`).join('')}
@@ -657,47 +630,50 @@ function sPhoto(){
       <div class="safeguard">${t('safeguard')}</div>`;
 }
 function sFamily(){
-  return F('주보호자',r=>chips('주보호자',t('guardian'),{req:r}))
-   + F('동거가족수',r=>txt('동거가족수',t('household'),{req:r,type:'number',ph:'5'}))
-   + F('주소득원',r=>chips('주소득원',t('income'),{req:r}))
-   + F('식수원',r=>chips('식수원',t('water'),{req:r,hint:t('waterHint')}))
-   + F('전기',r=>chips('전기',t('power'),{req:r}));
+  return txt('동거가족수',t('household'),{req:true,type:'number',ph:'5'})
+   + txt('가족구성',t('familyMake'),{req:true,hint:t('familyMakeHint'),ph:t('familyMakePh')});
 }
 function sEdu(){
   const att=d().취학여부==='다니고있음';
-  return F('취학여부',r=>chips('취학여부',t('inSchool'),{req:r}))
-   + F('학년',r=>att?txt('학년',t('grade'),{req:r,ph:t('gradePh')})
-                   :txt('미취학사유',t('noSchoolWhy'),{req:r,hint:t('noSchoolHint')}))
-   + F('건강상태',r=>chips('건강상태',t('health'),{req:r}))
-   + F('건강메모',r=>area('건강메모',t('healthNote'),{req:r,hint:t('healthHint')}));
+  const dis=d().건강상태==='장애';
+  return chips('취학여부',t('inSchool'),{req:true})
+   + (att?txt('학교명',t('schoolName'),{req:true,ph:t('schoolNamePh')})
+        + txt('학년',t('grade'),{req:true,ph:t('gradePh')}):'')
+   + chips('건강상태',t('health'),{req:true})
+   + (dis?multi('장애명',t('disability'),{req:true,hint:t('disabilityHint')}):'')
+   + txt('신장',t('height'),{req:true,type:'number',ph:'120'})
+   + txt('체중',t('weight'),{req:true,type:'number',ph:'25'});
 }
 function sStory(){
-  return F('장래희망',r=>txt('장래희망',t('dream'),{req:r,ph:t('dreamPh')}))
-   + F('좋아하는과목',r=>txt('좋아하는과목',t('subject'),{req:r,ph:t('subjectPh')}))
-   + F('취미',r=>txt('취미',t('hobby'),{req:r,ph:t('hobbyPh')}))
-   + F('아동의말',r=>area('아동의말',t('childWords'),{req:r,hint:t('childWordsHint'),ph:t('childWordsPh')}))
-   + F('담당자메모',r=>area('담당자메모',t('staffNote'),{req:r,hint:t('staffNoteHint')}));
+  return txt('장래희망',t('dream'),{req:true,ph:t('dreamPh')})
+   + txt('좋아하는과목',t('subject'),{req:true,ph:t('subjectPh')})
+   + txt('좋아하는색깔',t('color'),{req:true,ph:t('colorPh')})
+   + txt('취미',t('hobby'),{req:true,ph:t('hobbyPh')});
 }
 function sConsent(){
   const x=d();
-  const gaps=[[!x._face,t('shotFace')],[!x.영문이름,t('engName')],[!x.생년월일,t('dob')],
-              [!x.장래희망,t('dream')],[!x.아동의말,t('childWords')]]
+  const gaps=[[!x._face,t('shotFace')],[!x.현지어이름,t('localName')],[!x.생년월일,t('dob')],
+              [!x.장래희망,t('dream')],[!x.가족구성,t('familyMake')]]
     .filter(a=>a[0]).map(a=>f('gapItem',{'%s':a[1]}));
   const a=age(x.생년월일),v=(val,fb)=>val?esc(val):`<span class="gap">${fb}</span>`;
+  const school=x.취학여부==='다니고있음'
+    ? [x.학교명,x.학년].filter(Boolean).join(' · ') : ov('취학여부',x.취학여부);
+  const health=x.건강상태==='장애'
+    ? mvals('장애명').map(v=>ov('장애명',v)).join(', ') : ov('건강상태',x.건강상태);
   return `<p class="eyebrow">${t('previewEyebrow')}</p>
     <div class="pcard">
       <div class="pc-top"><span>${t('profile')}</span><b>${esc(x.아동코드||t('codePending'))}</b></div>
       <div class="pc-body">
         ${x._face?`<img class="pc-photo" src="${src(x._face)}" alt="">`:`<div class="pc-photo gap">${t('noPhotoBox')}</div>`}
         <div style="min-width:0;flex:1">
-          <div class="pc-name">${v(x.영문이름||x.현지어이름,t('noName'))}</div>
+          <div class="pc-name">${v(x.현지어이름,t('noName'))}</div>
           <div class="pc-sub">${countryName(x.국가코드)}${a!==null?` · ${a}${t('yrs')}`:''}</div>
           <dl class="dl">
             <div><dt>${t('fDream')}</dt><dd>${v(x.장래희망,t('blank'))}</dd></div>
-            <div><dt>${t('fSchool')}</dt><dd>${v(x.학년||ov('취학여부',x.취학여부),t('blank'))}</dd></div>
-            <div><dt>${t('fFamily')}</dt><dd>${v(ov('주보호자',x.주보호자),t('blank'))}</dd></div>
+            <div><dt>${t('fSchool')}</dt><dd>${v(school,t('blank'))}</dd></div>
+            <div><dt>${t('fFamily')}</dt><dd>${v(x.가족구성,t('blank'))}</dd></div>
+            <div><dt>${t('fHealth')}</dt><dd>${v(health,t('blank'))}</dd></div>
           </dl></div></div>
-      ${x.아동의말?`<div class="pc-q"><em>${t('fWords')}</em>${esc(x.아동의말)}</div>`:''}
     </div>
     ${gaps.length?`<ul class="gaps">${gaps.map(g=>`<li>${g}</li>`).join('')}</ul>`:''}
     <h2 style="margin:24px 0 4px">${t('consentTitle')}</h2>
@@ -723,8 +699,17 @@ function bindIn(root){
       const k=box.dataset.c;d()[k]=b.dataset.v;
       box.querySelectorAll('.chip').forEach(c=>c.setAttribute('aria-pressed',c===b));
       const x=$('e_'+k);if(x)x.classList.remove('show');saveDraft();
-      if(k==='취학여부')return renderStep();
+      if(k==='취학여부'||k==='건강상태')return renderStep();
       if(k==='성별')refreshDup();};});
+  root.querySelectorAll('[data-m]').forEach(box=>{
+    box.onclick=e=>{const b=e.target.closest('.chip');if(!b)return;
+      const k=box.dataset.m,v=b.dataset.v;
+      const on=String(d()[k]||'').split(',').map(x=>x.trim()).filter(Boolean);
+      const i=on.indexOf(v);
+      if(i<0)on.push(v);else on.splice(i,1);
+      d()[k]=on.join(', ');
+      b.setAttribute('aria-pressed',i<0);
+      const x=$('e_'+k);if(x)x.classList.remove('show');saveDraft();};});
   root.querySelectorAll('[data-g]').forEach(el=>{
     el.onchange=e=>{d()._guide[el.dataset.g]=e.target.checked;
       el.classList.toggle('on',e.target.checked);$('e_guide').classList.remove('show');saveDraft();};});
@@ -747,14 +732,12 @@ function fail(k,m){const el=$('f_'+k);if(el)el.classList.add('invalid');
   const e=$('e_'+k);if(e){e.textContent=m;e.classList.add('show');}}
 function validate(){
   const x=d();let ok=true;
-  /* 관리자가 '선택'이나 '사용 안 함'으로 바꾼 항목은 검사하지 않습니다 */
-  const need=ks=>ks.forEach(k=>{
-    if(TOGGLE_FIELDS.some(f=>f.k===fkey(k))&&!freq(k))return;
-    if(!x[k]){fail(k,t('errRequired'));ok=false;}});
+  const need=ks=>ks.forEach(k=>{if(!String(x[k]||'').trim()){fail(k,t('errRequired'));ok=false;}});
+  const num=ks=>ks.forEach(k=>{const v=String(x[k]||'').trim();
+    if(v&&!(Number(v)>0)){fail(k,t('errNumber'));ok=false;}});
   switch(STEPS[state.step]){
     case 'basic':
-      need(['현지어이름','영문이름','성별','생년월일','출생등록']);
-      if(freq('_full')&&!x._full){const e=$('e_face');if(e){e.textContent=t('errRequired');e.classList.add('show');}ok=false;}
+      need(['현지어이름','성별','생년월일','출생등록']);
       refreshDup();
       if(findDup(x).strong.length){
         if(x.중복확인===L.중복확인[1])return'stop';
@@ -769,9 +752,18 @@ function validate(){
       if(!Object.values(x._guide).every(Boolean)){
         const e=$('e_guide');e.textContent=t('errGuide');e.classList.add('show');ok=false;}
       break;
-    case 'family':need(['주보호자','동거가족수','주소득원','식수원','전기']);break;
-    case 'edu':   need(['취학여부','건강상태',d().취학여부==='다니고있음'?'학년':'미취학사유']);break;
-    case 'story': need(['장래희망','좋아하는과목','취미','아동의말','담당자메모']);break;
+    case 'family':
+      need(['동거가족수','가족구성']);num(['동거가족수']);break;
+    case 'edu':
+      need(['취학여부','건강상태','신장','체중']);
+      num(['신장','체중']);
+      if(x.취학여부==='다니고있음')need(['학교명','학년']);
+      /* 건강상태가 '장애'면 유형을 반드시 골라야 합니다 */
+      if(x.건강상태==='장애'&&!mvals('장애명').length){
+        const e=$('e_장애명');if(e){e.textContent=t('errDisability');e.classList.add('show');}ok=false;}
+      break;
+    case 'story':
+      need(['장래희망','좋아하는과목','좋아하는색깔','취미']);break;
     case 'consent':
       if(!x._cons){const e=$('e_cons');e.textContent=t('errCons');e.classList.add('show');ok=false;}
       else if(!qcCleared('_cons')){const e=$('e_cons');e.textContent=t('qcBlocked');e.classList.add('show');ok=false;}
@@ -786,13 +778,15 @@ function validate(){
 async function finishChild(){
   const x=d();
   if(!x.생년월일추정)x.생년월일추정='아니오';
+  if(x.취학여부!=='다니고있음'){x.학교명='';x.학년='';}
+  if(x.건강상태!=='장애')x.장애명='';
   /* 아동코드·연번·사진파일명은 본부가 도착 순서대로 부여합니다 */
   x.아동코드='';x.연번='';x.대표사진='';x.동의서사진='';
   x._exp=null;x._sync='pending';
   await DB.put('records',x);
   state.records.push(x);
   await dropDraft();
-  toast(f('savedLocal',{'%n':esc(x.영문이름||x.현지어이름||'')}));
+  toast(f('savedLocal',{'%n':esc(x.현지어이름||'')}));
   show('home');
   runSync(false);
 }

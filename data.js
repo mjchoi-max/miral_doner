@@ -22,31 +22,34 @@ const SITES=[
 const L={
   성별:['여','남'], 출생등록:['있음','없음','확인불가'],
   중복확인:['다른 아동입니다','같은 아동이라 등록을 중단합니다'],
-  주보호자:['부모모두','어머니','아버지','조부모','친척','시설·보호소'],
-  주소득원:['농업','일용직','소규모장사','고정급여','없음'],
-  식수원:['집안수도','공동수도','우물','강·연못'], 전기:['있음','불안정','없음'],
-  취학여부:['다니고있음','중단함','다닌적없음'], 건강상태:['양호','치료중','장애있음']
+  취학여부:['다니고있음','중단함','다닌적없음'],
+  건강상태:['양호','장애'],
+  /* 장애명은 여러 개를 함께 고를 수 있습니다 */
+  장애명:['시각장애','청각장애','지체장애','자폐스펙트럼','다운증후군',
+         '언어장애','지적장애','혈우병','정신·심리장애']
 };
+const MULTI=['장애명'];
 const OPT_EN={
   성별:{'여':'Female','남':'Male'},
   출생등록:{'있음':'Yes','없음':'No','확인불가':'Cannot verify'},
   중복확인:{'다른 아동입니다':'Different child','같은 아동이라 등록을 중단합니다':'Same child — stop here'},
-  주보호자:{'부모모두':'Both parents','어머니':'Mother','아버지':'Father','조부모':'Grandparents',
-           '친척':'Relative','시설·보호소':'Institution / shelter'},
-  주소득원:{'농업':'Farming','일용직':'Daily labour','소규모장사':'Small trading',
-           '고정급여':'Regular wage','없음':'No income'},
-  식수원:{'집안수도':'Tap at home','공동수도':'Communal tap','우물':'Well','강·연못':'River or pond'},
-  전기:{'있음':'Yes','불안정':'Intermittent','없음':'None'},
   취학여부:{'다니고있음':'Attending','중단함':'Dropped out','다닌적없음':'Never attended'},
-  건강상태:{'양호':'Good','치료중':'Under treatment','장애있음':'Has a disability'}
+  건강상태:{'양호':'Good','장애':'Has a disability'},
+  장애명:{'시각장애':'Visual','청각장애':'Hearing','지체장애':'Physical',
+         '자폐스펙트럼':'Autism spectrum','다운증후군':'Down syndrome','언어장애':'Speech',
+         '지적장애':'Intellectual','혈우병':'Haemophilia','정신·심리장애':'Mental health'}
 };
 
-/* 아동마스터 시트 컬럼 순서 — 시트와 반드시 일치해야 합니다. */
-const MASTER_COLS=['아동코드','국가코드','사업장코드','연번','등록일','등록담당자','현지어이름','영문이름',
-'성별','생년월일','생년월일추정','출생등록','중복확인','중복확인메모','주보호자','동거가족수','주소득원',
-'식수원','전기','취학여부','학년','미취학사유','건강상태','건강메모','장래희망','좋아하는과목','취미',
-'아동의말','담당자메모','보호자동의','아동동의','활용동의','동의서사진','대표사진','상태','본부검수일',
+/* 아동마스터 시트 컬럼 순서 — 시트와 반드시 일치해야 합니다.
+   이 목록을 고치면 구글 시트의 머리글도 똑같이 고쳐야 합니다. */
+const MASTER_COLS=['아동코드','국가코드','사업장코드','연번','등록일','등록담당자',
+'현지어이름','성별','생년월일','생년월일추정','출생등록','중복확인','중복확인메모',
+'동거가족수','가족구성',
+'취학여부','학교명','학년','건강상태','장애명','신장','체중',
+'장래희망','좋아하는과목','좋아하는색깔','취미',
+'보호자동의','아동동의','활용동의','동의서사진','대표사진','상태','본부검수일',
 '본부검수자','종료일','종료사유','기록ID','전송일시'];
+
 const PHOTO_COLS=['사진ID','아동코드','촬영일','사진유형','사진파일','촬영자','촬영기준확인','비고'];
 
 const STEPS=['basic','photo','family','edu','story','consent'];
@@ -54,35 +57,6 @@ const STEPS=['basic','photo','family','edu','story','consent'];
 /* 관리자 페이지 기본 비밀번호 — 배포 전에 바꾸세요. 앱 안에서도 바꿀 수 있습니다. */
 const ADMIN={pin:'2026'};
 
-/* 관리자가 켜고 끌 수 있는 등록 항목.
-   def : 'req' 필수 · 'opt' 선택 · 'off' 사용 안 함
-   여기에 없는 항목(영문이름·생년월일·성별·상반신사진·동의 3종)은
-   아동 식별과 아동보호에 필요하므로 끌 수 없습니다. */
-const TOGGLE_FIELDS=[
-  {k:'현지어이름', s:'localName', step:'basic',  def:'req'},
-  {k:'출생등록',   s:'birthReg',  step:'basic',  def:'req'},
-  {k:'_full',      s:'shotFull',  step:'photo',  def:'opt'},
-  {k:'주보호자',   s:'guardian',  step:'family', def:'req'},
-  {k:'동거가족수', s:'household', step:'family', def:'req'},
-  {k:'주소득원',   s:'income',    step:'family', def:'req'},
-  {k:'식수원',     s:'water',     step:'family', def:'req'},
-  {k:'전기',       s:'power',     step:'family', def:'req'},
-  {k:'취학여부',   s:'inSchool',  step:'edu',    def:'req'},
-  {k:'학년',       s:'grade',     step:'edu',    def:'opt'},
-  {k:'건강상태',   s:'health',    step:'edu',    def:'req'},
-  {k:'건강메모',   s:'healthNote',step:'edu',    def:'opt'},
-  {k:'장래희망',   s:'dream',     step:'story',  def:'req'},
-  {k:'좋아하는과목',s:'subject',  step:'story',  def:'opt'},
-  {k:'취미',       s:'hobby',     step:'story',  def:'opt'},
-  {k:'아동의말',   s:'childWords',step:'story',  def:'req'},
-  {k:'담당자메모', s:'staffNote', step:'story',  def:'opt'}
-];
-
-/* 본부 수신 서버 — 배포한 Apps Script 웹앱 주소와 전송키.
-   여기에 미리 넣어두면 직원이 설정 화면에서 입력하지 않아도 됩니다. */
-const SERVER={url:'', key:''};   /* 예: {url:'https://script.google.com/macros/s/AKf.../exec', key:''} */
-
-/* ══════════════ 화면 문구 [한국어, English] ══════════════ */
 const S={
   appName:['해외결연 아동 신규수급','Child sponsorship intake'],
   noSite:['사업장 미선택','No site selected'],
@@ -126,6 +100,11 @@ const S={
   warnPending:['아직 시트에 옮기지 않은 등록이 <b>%n건</b> 있습니다. 인터넷이 되는 곳에서 <b>내보내기</b>를 하세요.',
                '<b>%n</b> registrations have not been moved to the sheet yet. Export them where you have internet.'],
   warnOk:['모든 등록을 내보냈습니다.','Everything has been exported.'],
+  warnPend2:['본부로 보내지 않은 등록이 <b>%n건</b> 있습니다. 인터넷이 되는 곳에서 <b>본부로 전송</b>을 눌러주세요.',
+             '<b>%n</b> registrations have not been sent to HQ. Tap <b>Send to HQ</b> where you have internet.'],
+  warnOk2:['모든 등록을 본부로 보냈습니다.','Everything has been sent to HQ.'],
+  hqNotSet:['본부 전송 주소가 설정되지 않았습니다. 설정 화면에서 입력하세요.',
+            'No HQ address is set. Enter it in the settings screen.'],
   seqFull:['이 사업장의 500개 번호를 모두 사용했습니다.','All 500 codes for this site are used.'],
   noRecords:['등록된 아동이 없습니다.','No children to export.'],
 
@@ -161,8 +140,10 @@ const S={
   assigned:['배정된 아동코드','Assigned child code'],
   assignedNote:['이 코드로 사진 파일명과 사진ID가 자동 생성됩니다.',
                 'Photo filenames and photo IDs are generated from this code.'],
-  localName:['현지어 이름','Name in local language'],
+  localName:['아동 이름 (현지어)','Child\u2019s name'],
   localNamePh:['현지 표기 그대로','As written locally'],
+  localNameHint:['출생증명서가 있으면 그 표기를 그대로 옮겨 적으세요. 이 이름으로 중복 등록을 확인합니다.',
+                 'Copy the spelling from the birth certificate where there is one. Duplicates are checked by this name.'],
   engName:['영문 이름','Name in English'],
   engNameHint:['출생증명서 표기와 동일하게 입력하세요.','Match the spelling on the birth certificate.'],
   dob:['생년월일','Date of birth'],
@@ -220,6 +201,19 @@ const S={
 
   guardian:['주 보호자','Main carer'],
   household:['함께 사는 가족 수','People in the household'],
+  familyMake:['가족 구성','Who lives with the child'],
+  familyMakeHint:['아동과 함께 사는 사람을 적어주세요.','List the people living with the child.'],
+  familyMakePh:['어머니, 아버지, 자매 2, 형제 1','Mother, father, 2 sisters, 1 brother'],
+  schoolName:['학교명','School name'],
+  schoolNamePh:['하와사 초등학교','Hawassa Primary School'],
+  disability:['장애 유형','Type of disability'],
+  disabilityHint:['해당하는 항목을 모두 골라주세요.','Choose every one that applies.'],
+  height:['신장 (cm)','Height (cm)'],
+  weight:['체중 (kg)','Weight (kg)'],
+  color:['좋아하는 색깔','Favourite colour'],
+  colorPh:['파랑','Blue'],
+  errDisability:['장애 유형을 하나 이상 골라주세요.','Choose at least one type.'],
+  errNumber:['숫자로 입력해 주세요.','Enter a number.'],
   income:['주 소득원','Main income'],
   water:['식수원','Drinking water'],
   waterHint:['식수와 전기는 생활 여건을 가장 잘 보여주는 지표입니다.',
@@ -240,8 +234,8 @@ const S={
   dreamPh:['간호사','Nurse'],
   subject:['좋아하는 과목','Favourite subject'],
   subjectPh:['수학','Maths'],
-  hobby:['좋아하는 놀이','Favourite play'],
-  hobbyPh:['친구들과 축구','Football with friends'],
+  hobby:['취미','Hobby'],
+  hobbyPh:['친구들과 축구하기','Playing football with friends'],
   childWords:['아동이 직접 한 말','The child\u2019s own words'],
   childWordsHint:['통역하되 바꾸지 마세요. 아동의 말투가 결연자에게 가장 큰 힘이 됩니다.',
                   'Translate, do not rewrite. The child\u2019s own voice matters most to the sponsor.'],
@@ -257,6 +251,7 @@ const S={
   fDream:['꿈','Dream'],
   fSchool:['학교','School'],
   fFamily:['가족','Family'],
+  fHealth:['건강','Health'],
   fWords:['아동의 말','In the child\u2019s words'],
   gapItem:['· %s이(가) 비어 있습니다','· %s is empty'],
   consentTitle:['동의 확인','Consent'],
@@ -300,10 +295,10 @@ const S={
            'Choose the <b>아동마스터.csv</b> you received from HQ. It is stored on this device and used to check duplicates offline. Photos are not included.'],
   impPick:['CSV 파일 고르기','Choose a CSV file'],
   impDone:['%n명을 불러왔습니다.','Loaded %n children.'],
-  impFail:['CSV를 읽지 못했습니다. 영문이름·생년월일 열이 있는 파일인지 확인하세요.',
-           'Could not read the CSV. Check that it has 영문이름 and 생년월일 columns.'],
-  impCols:['필요한 열: 아동코드, 영문이름, 생년월일, 성별 (사업장코드, 현지어이름은 있으면 함께 씁니다)',
-           'Required columns: 아동코드, 영문이름, 생년월일, 성별 (사업장코드 and 현지어이름 are used when present)'],
+  impFail:['CSV를 읽지 못했습니다. 현지어이름·생년월일 열이 있는 파일인지 확인하세요.',
+           'Could not read the CSV. Check that it has 현지어이름 and 생년월일 columns.'],
+  impCols:['필요한 열: 아동코드, 현지어이름, 생년월일, 성별 (사업장코드는 있으면 함께 씁니다)',
+           'Required columns: 아동코드, 현지어이름, 생년월일, 성별 (사업장코드 is used when present)'],
 
   /* ── 사진 자동 점검 ── */
   qcChecking:['사진을 확인하는 중…','Checking the photo…'],

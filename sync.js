@@ -89,12 +89,12 @@ async function run(opts){
 async function roster(){
   if(!state.hqUrl)return 0;
   const j=await post(state.hqUrl,{action:'roster',key:state.hqKey,site:state.site});
-  const rows=(j.roster||[]).filter(r=>r.영문이름||r.생년월일);
+  const rows=(j.roster||[]).filter(r=>r.현지어이름||r.생년월일);
   if(!rows.length)return 0;
   await DB.clear('roster');
   await DB.bulk('roster',rows.map((r,i)=>({아동코드:r.아동코드||('HQ-'+i),
-    영문이름:r.영문이름||'',생년월일:r.생년월일||'',성별:r.성별||'',
-    사업장코드:r.사업장코드||'',현지어이름:r.현지어이름||'',주보호자:r.주보호자||''})));
+    현지어이름:r.현지어이름||'',생년월일:r.생년월일||'',성별:r.성별||'',
+    사업장코드:r.사업장코드||''})));
   state.roster=(await DB.all('roster'))||[];
   state.rosterDate=today();
   await DB.put('kv',state.rosterDate,'rosterDate');
