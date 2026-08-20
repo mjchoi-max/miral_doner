@@ -128,8 +128,8 @@ function judge(m,kind){
   /* 대비가 거의 없는 사진 = 렌즈가 가려졌거나 아무것도 찍히지 않은 상태.
      어두운 사진은 위에서 이미 잡았으므로 중복해서 알리지 않습니다. */
   if(sh.std<15){ if(!darkBad)add('lowcontrast','bad'); }
-  else if(sh.rel<0.022)add('blur','bad');
-  else if(sh.rel<0.045)add('blur','warn');
+  else if(sh.rel<0.016)add('blur','bad');
+  else if(sh.rel<0.030)add('blur','warn');
 
   if(ex.gap>42)add('backlit','bad');
   else if(ex.gap>26)add('backlit','warn');

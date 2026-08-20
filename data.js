@@ -1,13 +1,8 @@
 /* ══════════════════════════════════════════════════════════════
-   기준 데이터 — 실제 사업장으로 교체할 때 이 파일만 수정하세요.
-   Reference data — edit this file only, to match your own sites.
+   선택지 · 시트 열 · 화면 문구
+   국가와 사업장, 서버 주소는 config.js 에 있습니다.
+   앱을 새 버전으로 바꿀 때 이 파일은 그대로 덮어쓰면 됩니다.
    ══════════════════════════════════════════════════════════════ */
-
-const COUNTRIES=[
-  {code:'VNM',ko:'베트남',en:'Vietnam'}, {code:'NPL',ko:'네팔',en:'Nepal'}];
-
-const SITES=[
-    {code:'TAS',country:'VNM',ko:'떤선',en:'Tan Son'},{code:'DTI',country:'NPL',ko:'다딩',en:'Dhading'}];
 
 /* 선택지 — 저장되는 값은 항상 한국어(시트 값과 일치). 화면 표기만 번역됩니다. */
 const L={
@@ -44,14 +39,6 @@ const MASTER_COLS=['아동코드','국가코드','사업장코드','연번','등
 const PHOTO_COLS=['사진ID','아동코드','촬영일','사진유형','사진파일','촬영자','촬영기준확인','비고'];
 
 const STEPS=['basic','photo','family','edu','story','consent'];
-
-/* 본부 수신 서버 — 배포한 Apps Script 웹앱 주소와 전송키.
-   여기에 미리 넣어두면 직원이 설정 화면에서 입력하지 않아도 됩니다.
-   저장소가 공개(Public)라면 비워두세요. 키가 인터넷에 노출됩니다. */
-const SERVER={url:'',key:''};
-
-/* 관리자 페이지 기본 비밀번호 — 배포 전에 바꾸세요. 앱 안에서도 바꿀 수 있습니다. */
-const ADMIN={pin:'2026'};
 
 const S={
   appName:['해외결연 아동 신규수급','Child sponsorship intake'],
@@ -448,7 +435,7 @@ const S={
   revNow:['현재 개정 %n','Revision %n'],
   fromHq:['본부에서 내려온 설정입니다. 여기서 고친 뒤 [본부에 저장하고 적용]을 눌러야 다른 기기에 전달됩니다.',
           'These came from HQ. After editing, tap [Save to HQ and apply] to send them to the other devices.'],
-   
+
   /* ── 직원용 설치 링크 ── */
   linkTitle:['직원용 설치 링크','Setup link for staff'],
   linkBody:['직원은 이 링크를 한 번 열기만 하면 본부 주소와 전송키가 자동으로 채워집니다. 주소를 손으로 옮겨 적을 필요가 없습니다.',
@@ -464,5 +451,27 @@ const S={
              'Set the HQ address first to create a link.'],
   linkApplied:['본부 전송 설정을 받았습니다.','HQ connection settings applied.'],
   linkPrint:['인쇄용으로 QR을 길게 눌러 이미지로 저장할 수 있습니다.',
-             'Long-press the QR to save it as an image for printing.']
+             'Long-press the QR to save it as an image for printing.'],
+
+  /* ── 홈 화면에 추가 ── */
+  instTitle:['휴대폰 바탕화면에 추가하세요','Add this to your home screen'],
+  instBody:['한 번 추가하면 QR이나 주소 없이 아이콘만 눌러 바로 열립니다. 인터넷이 없어도 그대로 동작합니다.',
+            'Add it once and the icon opens it directly — no QR or address needed. It works offline too.'],
+  instBtn:['바탕화면에 추가','Add to home screen'],
+  instLater:['나중에','Later'],
+  instDone:['추가했습니다. 이제 아이콘으로 여세요.','Added. Open it from the icon now.'],
+  instIosTitle:['아이폰에서 추가하는 방법','How to add it on iPhone'],
+  instIos1:['1. 화면 아래 가운데 <b>공유 버튼</b>을 누르세요 (네모에 화살표)',
+            '1. Tap the <b>Share</b> button at the bottom (square with an arrow)'],
+  instIos2:['2. 목록을 내려 <b>홈 화면에 추가</b>를 누르세요',
+            '2. Scroll down and tap <b>Add to Home Screen</b>'],
+  instIos3:['3. 오른쪽 위 <b>추가</b>를 누르면 끝입니다',
+            '3. Tap <b>Add</b> at the top right'],
+  instIosNote:['사파리에서 열어야 이 메뉴가 나옵니다. 다른 브라우저라면 사파리로 다시 열어주세요.',
+               'This menu only appears in Safari. If you are in another browser, open it in Safari.'],
+  instEtcTitle:['이 브라우저에서 추가하는 방법','How to add it in this browser'],
+  instEtc1:['1. 주소창 옆 <b>점 세 개</b> 메뉴를 누르세요','1. Tap the <b>three dots</b> menu next to the address bar'],
+  instEtc2:['2. <b>앱 설치</b> 또는 <b>홈 화면에 추가</b>를 누르세요',
+            '2. Tap <b>Install app</b> or <b>Add to Home screen</b>'],
+  instAlready:['이미 바탕화면 아이콘으로 실행 중입니다.','You are already running from the home screen icon.']
 };
