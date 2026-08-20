@@ -269,6 +269,7 @@ function renderHome(){
       <p>${f('resumeBody',{'%c':esc(dr.현지어이름||t('noName')),'%s':state.step+1})}</p>
       <div class="two"><button class="primary" id="bResume">${t('resumeGo')}</button>
       <button class="ghost rust" id="bDrop">${t('resumeDrop')}</button></div></div>`:''}
+    ${instCard()}
     <div class="stats">
       <div class="stat a"><div class="stat-n">${state.records.length}</div><div class="stat-l">${t('statSaved')}</div></div>
       <div class="stat ${unsent?'warn':'b'}"><div class="stat-n">${unsent}</div><div class="stat-l">${t('statUnsent')}</div></div>
@@ -298,6 +299,7 @@ function renderHome(){
     $('bResume').onclick=()=>show('step');
     $('bDrop').onclick=async()=>{await dropDraft();toast(t('drafted'));render();};
   }
+  bindInstall();
   $('bNew').onclick=async()=>{
     if(state.draft)await dropDraft();
     state.draft=newDraft();state.step=0;saveDraft(true);show('step');};
@@ -356,6 +358,61 @@ async function importCSV(file){
     await DB.put('kv',state.rosterDate,'rosterDate');
     toast(f('impDone',{'%n':out.length}));show('home');
   }catch(e){toast(t('impFail'));}
+}
+
+/* ══════════════ 바탕화면에 추가 ══════════════
+   안드로이드 크롬은 브라우저가 설치 기회를 넘겨줍니다(beforeinstallprompt).
+   아이폰 사파리는 그 기능이 없어 직접 하는 방법을 그림처럼 안내합니다. */
+let installEvt=null;
+const isStandalone=()=>
+  (self.matchMedia&&matchMedia('(display-mode: standalone)').matches)||navigator.standalone===true;
+const isIOS=()=>/iphone|ipad|ipod/i.test(navigator.userAgent)||
+  (navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+const showInstall=()=>!isStandalone()&&!state.instHide;
+
+window.addEventListener('beforeinstallprompt',e=>{
+  e.preventDefault();installEvt=e;
+  if(state.view==='home')renderHome();
+});
+window.addEventListener('appinstalled',()=>{
+  installEvt=null;state.instHide=true;
+  toast(t('instDone'));
+  if(state.view==='home')renderHome();
+});
+
+function instCard(){
+  if(!showInstall())return '';
+  return `<div class="install" id="instCard">
+    <h3>${t('instTitle')}</h3>
+    <p>${t('instBody')}</p>
+    <div class="two">
+      <button class="primary" id="bInst">${t('instBtn')}</button>
+      <button class="ghost" id="bInstLater">${t('instLater')}</button>
+    </div>
+    <div id="instHelp"></div></div>`;
+}
+function bindInstall(){
+  const b=$('bInst'); if(!b)return;
+  $('bInstLater').onclick=()=>{state.instHide=true;renderHome();};
+  b.onclick=async()=>{
+    /* 브라우저가 설치 기회를 넘겨준 경우 — 버튼 한 번으로 끝납니다 */
+    if(installEvt){
+      installEvt.prompt();
+      const r=await installEvt.userChoice.catch(()=>null);
+      installEvt=null;
+      if(r&&r.outcome==='accepted'){state.instHide=true;toast(t('instDone'));}
+      return renderHome();
+    }
+    /* 아이폰이거나 지원하지 않는 브라우저 — 직접 하는 방법을 보여줍니다 */
+    const ios=isIOS();
+    $('instHelp').innerHTML=`<div class="insthelp">
+      <h4>${t(ios?'instIosTitle':'instEtcTitle')}</h4>
+      ${(ios?['instIos1','instIos2','instIos3']:['instEtc1','instEtc2'])
+        .map(k=>`<p>${t(k)}</p>`).join('')}
+      ${ios?`<p class="note">${t('instIosNote')}</p>`:''}
+    </div>`;
+    b.disabled=true;
+  };
 }
 
 /* ══════════════ 직원용 설치 링크 ══════════════
