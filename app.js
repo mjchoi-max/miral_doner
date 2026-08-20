@@ -236,12 +236,18 @@ function renderSetup(){
       <button class="ghost mt8" id="bTest">${t('hqTest')}</button>
       <p class="hint mt8" id="testOut"></p></div>
     <p class="err" id="eSetup"></p>
-    <button class="primary" id="bGo">${t('startBtn')}</button>`;
+    <button class="primary" id="bGo">${t('startBtn')}</button>
+    ${isStandalone()?`<p class="hint mt16">${t('instAlready')}</p>`
+      :`<div class="mt16"><button class="ghost jade" id="bInstAgain">${t('instAgain')}</button>
+         <p class="hint mt8">${t('instAgainHint')}</p></div>
+       <div id="instHelp"></div>`}`;
   const fill=()=>{const cc=$('sCountry').value;
     $('sSite').innerHTML=cc?`<option value="">${t('choose')}</option>`+
       onSites().filter(s=>s.country===cc).map(s=>`<option value="${s.code}" ${state.site===s.code?'selected':''}>${nm(s)} (${s.code})</option>`).join('')
       :`<option value="">${t('chooseCountryFirst')}</option>`;};
   fill();$('sCountry').onchange=fill;
+  const again=$('bInstAgain');
+  if(again)again.onclick=()=>{state.instHide=false;installAsk(again);};
   $('bGo').onclick=async()=>{
     const st=$('sStaff').value.trim(),c=$('sCountry').value,s=$('sSite').value;
     if(!st||!c||!s){const e=$('eSetup');e.textContent=t('setupErr');e.classList.add('show');return;}
@@ -391,28 +397,29 @@ function instCard(){
     </div>
     <div id="instHelp"></div></div>`;
 }
+async function installAsk(btn){
+  /* 브라우저가 설치 기회를 넘겨준 경우 — 버튼 한 번으로 끝납니다 */
+  if(installEvt){
+    installEvt.prompt();
+    const r=await installEvt.userChoice.catch(()=>null);
+    installEvt=null;
+    if(r&&r.outcome==='accepted'){state.instHide=true;toast(t('instDone'));}
+    return render();
+  }
+  /* 아이폰이거나 지원하지 않는 브라우저 — 직접 하는 방법을 보여줍니다 */
+  const ios=isIOS(),box=$('instHelp');
+  if(box)box.innerHTML=`<div class="insthelp">
+    <h4>${t(ios?'instIosTitle':'instEtcTitle')}</h4>
+    ${(ios?['instIos1','instIos2','instIos3']:['instEtc1','instEtc2'])
+      .map(k=>`<p>${t(k)}</p>`).join('')}
+    ${ios?`<p class="note">${t('instIosNote')}</p>`:''}
+  </div>`;
+  if(btn)btn.disabled=true;
+}
 function bindInstall(){
   const b=$('bInst'); if(!b)return;
   $('bInstLater').onclick=()=>{state.instHide=true;renderHome();};
-  b.onclick=async()=>{
-    /* 브라우저가 설치 기회를 넘겨준 경우 — 버튼 한 번으로 끝납니다 */
-    if(installEvt){
-      installEvt.prompt();
-      const r=await installEvt.userChoice.catch(()=>null);
-      installEvt=null;
-      if(r&&r.outcome==='accepted'){state.instHide=true;toast(t('instDone'));}
-      return renderHome();
-    }
-    /* 아이폰이거나 지원하지 않는 브라우저 — 직접 하는 방법을 보여줍니다 */
-    const ios=isIOS();
-    $('instHelp').innerHTML=`<div class="insthelp">
-      <h4>${t(ios?'instIosTitle':'instEtcTitle')}</h4>
-      ${(ios?['instIos1','instIos2','instIos3']:['instEtc1','instEtc2'])
-        .map(k=>`<p>${t(k)}</p>`).join('')}
-      ${ios?`<p class="note">${t('instIosNote')}</p>`:''}
-    </div>`;
-    b.disabled=true;
-  };
+  b.onclick=()=>installAsk(b);
 }
 
 /* ══════════════ 직원용 설치 링크 ══════════════

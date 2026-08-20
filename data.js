@@ -473,5 +473,8 @@ const S={
   instEtc1:['1. 주소창 옆 <b>점 세 개</b> 메뉴를 누르세요','1. Tap the <b>three dots</b> menu next to the address bar'],
   instEtc2:['2. <b>앱 설치</b> 또는 <b>홈 화면에 추가</b>를 누르세요',
             '2. Tap <b>Install app</b> or <b>Add to Home screen</b>'],
-  instAlready:['이미 바탕화면 아이콘으로 실행 중입니다.','You are already running from the home screen icon.']
+  instAlready:['이미 바탕화면 아이콘으로 실행 중입니다.','You are already running from the home screen icon.'],
+  instAgain:['바탕화면에 추가하기','Add to home screen'],
+  instAgainHint:['홈 화면에서 [나중에]를 눌렀더라도 여기서 언제든 다시 추가할 수 있습니다.',
+                 'Even if you tapped [Later] on the home screen, you can add it here any time.']
 };
